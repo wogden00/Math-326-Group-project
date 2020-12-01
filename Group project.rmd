@@ -1,1 +1,62 @@
 
+---
+title: "CB[2] Sound"
+author: "Wyatt Ogden, Yirui Sun, Trevor Fernstrom, Aaron Dodge"
+date: "November 30, 2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Introduction
+
+One of our key way of location is the sense of sound. We usually are able generally to distinguish where a sound is coming from. We will be testing how distance from the sound paired with volume of the sound affects the ability to determine the sound source location. We will have use a phone with a generic sound at distances of 3 ft, 5 ft, and 7 ft away from the observer, along with testing volume percentage of 10%, 30% and 50% of max volume of the phone.
+
+$$
+  Y_{ijk} = \mu + \alpha_i + \beta_{j} + \gamma_k + (\alpha\gamma)_{ik} +\epsilon_{ijk}
+$$
+
+**Independent Variable or Treatment:** 1st factor: distance sound is from the observer,  2nd factor: Volume of sound
+
+**Dependent variable:** Distance in degrees from sound
+
+**Material:** Block: helpers
+
+
+there are three different hypothesies
+
+one for the first factor
+
+$$
+  H_0: \alpha_1 = \alpha_2 = \ldots = 0
+$$
+$$
+  H_a: \alpha_i \neq 0 \ \text{for at least one distance} 
+$$
+
+One for the second factor
+$$
+  H_0: \gamma_1 = \gamma_2 = \ldots = 0
+$$
+$$
+  H_a: \gamma_j \neq 0 \ \text{for at least one volume}
+$$
+
+One for the interaction of the two factors:
+$$
+  H_0: \text{The effect of distance} \ \text{is the same for all levels of volume}
+$$
+$$
+  H_a: \text{The effect of distance} \text{is different for at least one level of distance}
+$$
+
+$$
+\alpha = .05
+$$
+
+## Method
+
+We will begin by having the observer sit in a spinning chair in the middle of a room blindfolded. We will have one person with the phone at the distance volume combinaiton of the current experiment. They will play the sound and ask the observer to point their arm to where they think the sound is coming from. We will have a 2nd person then measure the distance is degrees of the difference of where they are pointing their arm to and the person holding the phone that is producing the sound. We will repeat this over and over until we have collected data for each possible combination. The person holding the phone will move around the observer so it isn't coming from the same direction each time. We will have each combinaiton be in the same spot for each block so it has a mitigated effect between blocks. We will run all the tests in the same space so that ambiant noise and acoustics of the room is also mitigated. To help the person who is moving around producing the sound we will find a room the is fairly open with minimal chairs, desks, and other objects in the room.
+
