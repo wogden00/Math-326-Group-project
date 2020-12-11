@@ -1,0 +1,174 @@
+---
+title: "CB[2] Sound"
+author: "Wyatt Ogden, Yirui Sun, Trevor Fernstrom, Aaron Dodge"
+date: "November 30, 2020"
+output:
+   html_document:
+    Theme: cerulean
+    code_folding: hide
+---
+
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(pander)
+library(mosaic)
+library(car)
+hearing <- read_csv("https://raw.githubusercontent.com/wogden00/Math-326-Group-project/main/hearing.csv")
+hearing$degrees <- abs(hearing$degrees)
+hearing$person <- as.factor(hearing$person)
+hearing$distance <- as.factor(hearing$distance)
+hearing$volume <- as.factor(hearing$volume)
+```
+
+
+
+
+## Introduction
+
+One of our key ways of determining location is our sense of sound. We usually are able to distinguish where a sound is coming from. We will be testing how distance from the sound, paired with volume of the sound affects the ability of a person to determine the sources location. We will be using a phone with a generic sound (dog whistle) at distances of 3 ft, 5 ft, and 7 ft away from the observer, along with testing volume percentage of 10%, 30% and 50% of max volume of the phone. The purpose of this study is to test a humans sense of location using sound. There are a variety of applications where this could be used. It could help companies who create hearing aids for those who are hard of hearing to try and implement direction into their products. There could be applications for those who are blind or even for large companies who need to improve their listen devices such as AirPods from Apple.
+
+#### Model
+
+$$
+  Y_{ijk} = \mu + \alpha_i + \beta_{j} + \gamma_k + (\alpha\gamma)_{ik} +\epsilon_{ijk}
+$$
+
+#### Experimental Information
+
+**Independent Variable or Treatment:** 
+
+1st factor: Distance sound is from the observer 
+
+2nd factor: Volume of sound
+
+**Levels:** 
+
+1st Factor: 3ft, 5ft, 7ft
+
+2nd Factor: 2, 5, 8
+
+Block: Subjects
+
+**Dependent variable:** The difference, in degrees, between the sources location and the subjects guess
+
+**Material:** Subjects 
+
+
+#### Hypothesis
+
+**Distance**
+
+$$
+  H_0: \alpha_{3ft} = \alpha_{5ft} = \alpha_{7ft} = 0
+$$
+$$
+  H_a: \alpha_i \neq 0 \ \text{for at least one distance} 
+$$
+
+**Volume**
+
+$$
+  H_0: \gamma_{\text{Volume: 2}} = \gamma_{\text{Volume: 5}} = \gamma_{\text{Volume: 8}} = 0
+$$
+$$
+  H_a: \gamma_j \neq 0 \ \text{for at least one volume}
+$$
+
+**Interaction**
+
+$$
+  H_0: \text{The effect of distance} \ \text{is the same for all levels of volume}
+$$
+$$
+  H_a: \text{The effect of distance} \text{is different for at least one level of distance}
+$$
+
+$$
+\alpha = 0.05
+$$
+
+</br>
+
+## Method
+
+</br>
+
+We will begin by having the observer sit in a spinning chair in the middle of a room blindfolded. We will have one person with the phone at the distance/volume combination of the current experiment. They will play the sound for approximately 2 seconds and ask the observer to point their arm to position where they think the sound is coming from. The second person will then get two data points. The first is the angle at which the person is standing relative to the subject. The second is the angle at which the subject is pointing. The difference will then be calculated to get by how much the subject is off by. It should be noted that a protractor was used for the experiment to record the angles and that the angles are based off the shoulder joint of the arm the subject used to point with. Using the shoulder joint as the reference will give a more accurate angle of the direction of the source of the sound and the angle the subject is pointing. We will repeat this over and over until we have collected data for each possible combination. The person holding the phone will move around the observer so it isn't coming from the same direction each time. We will have each combinaiton be in the same spot for each block so it has a mitigated effect between blocks. We will have markings in the room so that the person producing the sound will be able to accurately repeat them. We will run all the tests in the same space so that ambiant noise and acoustics of the room is also mitigated. To help the person who is moving around and producing the sound we will find a room that is fairly open with minimal chairs, desks, and other objects in the room. 
+
+</br>
+
+## Analysis
+
+</br>
+
+```{r}
+hearing %>% 
+  ggplot() +
+  geom_boxplot(aes(x = distance, y = degrees))+
+  geom_point(aes(x = distance, y = degrees, shape = volume, color = person), size = 2)  +
+  labs(title = "Difference in Degrees of Sound Grouped by Distance", x = "Distance (ft.)", y = "Difference in Degrees", shape = "Volume", color = "Subject") +
+  theme_bw() 
+
+hearing %>% 
+  ggplot()+
+  geom_boxplot(aes(x = volume, y = degrees)) +
+  geom_point(aes(x = volume, y = degrees, shape = distance, color = person), size = 2) +
+  labs(title = "Difference in Degrees of Sound Grouped by Volume", x = "Volume", y = "Difference in Degrees", shape = "Distance", color = "Subject")  +
+  theme_bw()
+```
+
+Above we can see the spread of our data and how they compare to each other. Both graphics show that the bulk of the data overlap and there is very little variation between the different groups. This can be seen by that fact that the average and median lines on the boxplot are all about the same. We can see that there is an outlier in the data, if this was removed we would still be able to see minimal variation in the data. Based on these plots, it does not appear that there is stochastical difference between any of the factors of interest.
+
+
+```{r}
+interaction.plot(hearing$volume, hearing$distance, hearing$degrees, main = "Interaction Plot", xlab = "Volume", ylab = "Difference of Degrees")
+
+interaction.plot(hearing$distance, hearing$volume, hearing$degrees, main = "Interaction Plot", xlab = "Distance", ylab = "Difference of Degrees")
+```
+
+
+
+```{r}
+hearing.aov <- aov(degrees ~ volume * distance + person, data = hearing,
+                   contrasts = list(volume = contr.sum,
+                                    distance = contr.sum,
+                                    person = contr.sum))
+pander(summary(hearing.aov))
+```
+
+Add analysis of ANOVA
+
+
+```{r, warning=FALSE, message=FALSE}
+pander(dummy.coef(hearing.aov))
+```
+
+Add analysis of effects
+
+
+## Diagnostic plots
+
+</br>
+
+```{r}
+par(mfrow=c(1,2))
+plot(hearing.aov, which = 1:1)
+qqPlot(hearing.aov$residuals, main = "QQ Plot of Residuals", id = F)
+par(mfrow=c(1,1))
+```
+
+The residuals vs fitted plot looks to be highly violated, the variance is not constant at all. The Q-Q Plot looks to be mostly fine except for point 22 that is an outlier. Since these two diagnostic plots are both violated, we will run a levene test to double check.
+
+
+</br>
+
+## Conclusion
+
+Based on the information at hand, we can conclude that we are unable to reject the null hypothesis for any of the different test. All three test volume, distance, and the interaction are not significant. Some ideas we could test to see if things do become significant is have different volume levels, so that the range of volume is larger, or increase the distance so that the range of distances is larger. Increasing the range of volume would be a less expensive iteration to test because we could use the same space to test. If we wanted to test a large distance we would need to get a larger space which could then turn into a nuisance factor because we were not testing the spaces acoustics to see if they were significant. At the moment the interaction is also not significant and we may benefit from only testing one of the variables at a time in later iterations however as both variables increase the interaction may also then become significant.
+
+
+</br>
+</br>
