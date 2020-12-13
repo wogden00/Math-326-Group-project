@@ -30,13 +30,13 @@ hearing$volume <- as.factor(hearing$volume)
 
 One of our key ways of determining location is our sense of sound. We usually are able to distinguish where a sound is coming from. We will be testing how distance from the sound, paired with volume of the sound affects the ability of a person to determine the sources location. We will be using a phone with a generic sound (dog whistle) at distances of 3 ft, 5 ft, and 7 ft away from the observer, along with testing volume percentage of 10%, 30% and 50% of max volume of the phone. The purpose of this study is to test a humans sense of location using sound. There are a variety of applications where this could be used. It could help companies who create hearing aids for those who are hard of hearing to try and implement direction into their products. There could be applications for those who are blind or even for large companies who need to improve their listen devices such as AirPods from Apple.
 
-#### Model
+### Model
 
 $$
   Y_{ijk} = \mu + \alpha_i + \beta_{j} + \gamma_k + (\alpha\gamma)_{ik} +\epsilon_{ijk}
 $$
 
-#### Experimental Information
+### Experimental Information
 
 **Independent Variable or Treatment:** 
 
@@ -57,7 +57,7 @@ Block: Subjects
 **Material:** Subjects 
 
 
-#### Hypothesis
+### Hypothesis
 
 **Distance**
 
@@ -92,7 +92,7 @@ $$
 
 </br>
 
-## Method
+### Methodology
 
 </br>
 
@@ -100,7 +100,7 @@ We will begin by having the observer sit in a spinning chair in the middle of a 
 
 </br>
 
-## Analysis
+### Analysis
 
 </br>
 
@@ -129,7 +129,7 @@ interaction.plot(hearing$volume, hearing$distance, hearing$degrees, main = "Inte
 interaction.plot(hearing$distance, hearing$volume, hearing$degrees, main = "Interaction Plot", xlab = "Distance", ylab = "Difference of Degrees")
 ```
 
-
+Based on the interaction plots above, it would appear that there is some kind of interaction between the factors of interest. However, when we look back at our data we had one significant outlier that skewed our results. This is what we are seeing above. If the outlier were to be removed the spikes that we see in the middle would level off and the lines would likely be more parallel. To confirm this we will conduct a CB[2] ANOVA test. 
 
 ```{r}
 hearing.aov <- aov(degrees ~ volume * distance + person, data = hearing,
@@ -139,17 +139,17 @@ hearing.aov <- aov(degrees ~ volume * distance + person, data = hearing,
 pander(summary(hearing.aov))
 ```
 
-Add analysis of ANOVA
+In the ANOVA table above we can see that we have insufficient evidence to say that distance, volume, or the interaction between the two has an effect on a persons ability to detect sound. The idea is very interesting and may not be the main concern for companies who are trying to implement this idea into their products. However, while we did not find statistical significance with our data, we believe that the study should be conducted in a much more controlled area using more accurate measurement tools. If this study could be conducted in a soundproof room to discern the noise more clearly and with more accurate measuring tools like some kind of imaging device that can calculate the angle rather than measuring with a protractor. We beleive that this would give much more accurate results and could possible give statistical significant results. 
 
 
 ```{r, warning=FALSE, message=FALSE}
 pander(dummy.coef(hearing.aov))
 ```
 
-Add analysis of effects
 
 
-## Diagnostic plots
+
+### Diagnostic plots
 
 </br>
 
@@ -160,12 +160,12 @@ qqPlot(hearing.aov$residuals, main = "QQ Plot of Residuals", id = F)
 par(mfrow=c(1,1))
 ```
 
-The residuals vs fitted plot looks to be highly violated, the variance is not constant at all. The Q-Q Plot looks to be mostly fine except for point 22 that is an outlier. Since these two diagnostic plots are both violated, we will run a levene test to double check.
+The residuals vs fitted plot looks to be highly violated, the variance is not constant at all. The Q-Q Plot looks to be mostly fine except for the outlier in the top right. Since these two diagnostic plots are both violated, an ANOVA test is not appropriate for this data. We beleive there is no need for a Levene's Test as the constant variance assumption is very clearly violated. A log transformation was also performed to attempt to fix this issue but it did not produce constant variance.
 
 
 </br>
 
-## Conclusion
+### Conclusion
 
 Based on the information at hand, we can conclude that we are unable to reject the null hypothesis for any of the different test. All three test volume, distance, and the interaction are not significant. Some ideas we could test to see if things do become significant is have different volume levels, so that the range of volume is larger, or increase the distance so that the range of distances is larger. Increasing the range of volume would be a less expensive iteration to test because we could use the same space to test. If we wanted to test a large distance we would need to get a larger space which could then turn into a nuisance factor because we were not testing the spaces acoustics to see if they were significant. At the moment the interaction is also not significant and we may benefit from only testing one of the variables at a time in later iterations however as both variables increase the interaction may also then become significant.
 
